@@ -1,0 +1,7 @@
+.Grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  aspect-ratio: 1 / 1;
+  height: 90vh;
+  margin: 0 auto;
+}
