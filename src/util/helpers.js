@@ -20,34 +20,3 @@ export function hideBorder(index) {
 
   return style;
 }
-
-export function checkBoard(grid, value) {
-  const winningCombinations = [
-    [0, 1, 2],
-    [0, 3, 6],
-    [6, 7, 8],
-    [2, 5, 8],
-    [1, 4, 7],
-    [0, 4, 8],
-    [2, 4, 6],
-    [3, 4, 5]
-  ];
-
-  // - optimize to return on first true
-  return winningCombinations
-    .map((combination) => {
-      if (
-        grid[combination[0]].value === value &&
-        grid[combination[1]].value === value &&
-        grid[combination[2]].value === value
-      ) {
-        return true;
-      }
-      return false;
-    })
-    .some((element) => element);
-}
-
-export function isBoardFilled(grid) {
-  return grid.every((element) => element.value);
-}

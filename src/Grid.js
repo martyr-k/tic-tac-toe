@@ -1,53 +1,51 @@
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
 import Element from "./Element";
-import { checkBoard, isBoardFilled } from "./util/helpers";
+import PlayGrid from "./domains/PlayGrid";
+import eventBus from "./domains/PlayGridEvent";
 import "./styles/Grid.css";
 
-const initialGrid = new Array(9).fill({ value: null });
-const playerIcon = { 1: "X", 2: "O" };
-
 export default function Grid() {
-  const [grid, setGrid] = useState(initialGrid);
+  const [playGrid, setPlayGrid] = useState(new PlayGrid());
   const [player, setPlayer] = useState(1);
-  const [gameOver, setGameOver] = useState(false);
+  const [gameOver, setGameOver] = useState({ value: false, message: null });
 
-  const isGameOver = (newGrid) => {
-    if (checkBoard(newGrid, playerIcon[player]) || isBoardFilled(newGrid)) {
-      setGameOver(true);
-    }
-  };
+  useEffect(() => {
+    const subscription = eventBus.subscribe((v) => {
+      setGameOver({ value: true, message: v.event });
+    });
+
+    return () => subscription.unsubscribe();
+  });
 
   const handleNewGame = () => {
-    setGrid(initialGrid);
+    setPlayGrid(new PlayGrid());
     setPlayer(1);
     setGameOver(false);
   };
 
-  const handlePlay = (index) => {
-    if (gameOver) return;
+  const onPlay = (index) => {
+    if (gameOver.value) return;
 
-    const newGridState = [...grid];
-    newGridState[index] = { value: playerIcon[player] };
-
-    isGameOver(newGridState);
-
-    setGrid(newGridState);
+    setPlayGrid(playGrid.addPlay(index, player));
     setPlayer((player) => (player === 1 ? 2 : 1));
   };
 
   return (
     <>
-      <p>{gameOver ? "Game Over!" : `Current Player: ${player}`}</p>
-      {gameOver && <button onClick={handleNewGame}>New Game</button>}
+      <p>
+        {gameOver.value
+          ? `Game Over! ${gameOver.message}`
+          : `Current Player: ${player}`}
+      </p>
+      {gameOver.value && <button onClick={handleNewGame}>New Game</button>}
       <div className="Grid-container">
-        {grid.map((element, index) => {
+        {playGrid.grid.map((element, index) => {
           return (
             <Element
               key={index}
               index={index}
               value={element.value}
-              handlePlay={handlePlay}
+              handlePlay={onPlay}
             />
           );
         })}
