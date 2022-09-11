@@ -17,32 +17,36 @@ export default class PlayGrid {
     newGrid[index] = { value: playerIcon };
     this._grid = newGrid;
 
-    if (this.isWinner(playerIcon)) {
-      eventBus.next({ event: "winnerFound" });
-    } else if (this.isFilled) {
-      eventBus.next({ event: "boardFilled" });
-    }
+    eventBus.next({ event: "gridPlay", playGrid: this, playerIcon });
 
     return this;
   }
 
   get isFilled() {
-    return this._grid.every((element) => element.value);
+    if (this._grid.every((element) => element.value)) {
+      eventBus.next({ event: "gridFilled" });
+    }
   }
 
   isWinner(playerIcon) {
     // - optimize to return on first combination true
-    return winningCombinations
-      .map((combination) => {
-        if (
-          this._grid[combination[0]].value === playerIcon &&
-          this._grid[combination[1]].value === playerIcon &&
-          this._grid[combination[2]].value === playerIcon
-        ) {
-          return true;
-        }
-        return false;
-      })
-      .some((element) => element);
+    if (
+      winningCombinations
+        .map((combination) => {
+          if (
+            this._grid[combination[0]].value === playerIcon &&
+            this._grid[combination[1]].value === playerIcon &&
+            this._grid[combination[2]].value === playerIcon
+          ) {
+            return true;
+          }
+          return false;
+        })
+        .some((element) => element)
+    ) {
+      eventBus.next({ event: "gridWinner" });
+    } else {
+      eventBus.next({ event: "gridNoWinner", playGrid: this });
+    }
   }
 }
