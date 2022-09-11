@@ -13,8 +13,8 @@ export default function Grid() {
   useEffect(() => {
     const subscription = eventBus
       .pipe(filter((e) => isGameOverEvent(e)))
-      .subscribe((v) => {
-        setGameOver({ value: true, message: v.event });
+      .subscribe((ev) => {
+        setGameOver({ value: true, message: ev.event });
       });
 
     return () => subscription.unsubscribe();
@@ -23,13 +23,15 @@ export default function Grid() {
   const handleNewGame = () => {
     setPlayGrid(new PlayGrid());
     setPlayer(1);
-    setGameOver(false);
+    setGameOver({ value: false, message: null });
   };
 
   const onPlay = (index) => {
     if (gameOver.value) return;
 
-    setPlayGrid(playGrid.addPlay(index, player));
+    const newPlayGrid = playGrid.addPlay(index, player);
+    setPlayGrid(newPlayGrid);
+
     setPlayer((player) => (player === 1 ? 2 : 1));
   };
 
