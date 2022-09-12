@@ -1,5 +1,5 @@
-import { isGridPlayEvent, isNoWinnerEvent } from "./PlayGridEvent";
 import { Subject, filter } from "rxjs";
+import { isGridPlayEvent, isNoWinnerEvent } from "./PlayGridEvent";
 import { winningCombinations, playerIcons } from "../util/constants";
 
 export default class PlayGrid {

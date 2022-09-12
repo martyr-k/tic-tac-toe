@@ -30,8 +30,8 @@ export default function Grid() {
     if (gameOver.value) return;
 
     const newPlayGrid = playGrid.addPlay(index, player);
-    setPlayGrid(newPlayGrid);
 
+    setPlayGrid(newPlayGrid);
     setPlayer((player) => (player === 1 ? 2 : 1));
   };
 
