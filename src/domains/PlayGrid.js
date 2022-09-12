@@ -1,13 +1,35 @@
-import eventBus from "./PlayGridEvent";
+import { isGridPlayEvent, isNoWinnerEvent } from "./PlayGridEvent";
+import { Subject, filter } from "rxjs";
 import { winningCombinations, playerIcons } from "../util/constants";
 
 export default class PlayGrid {
   constructor() {
     this._grid = new Array(9).fill({ value: null });
+    this._eventBus = new Subject();
+
+    this._eventBus.pipe(filter((e) => isGridPlayEvent(e))).subscribe((e) => {
+      const { playerIcon } = e;
+
+      this.isWinner(playerIcon);
+    });
+
+    this._eventBus
+      .pipe(filter((e) => isNoWinnerEvent(e)))
+      .subscribe(() => this.isFilled);
   }
 
   get grid() {
     return this._grid;
+  }
+
+  get changes$() {
+    return this._eventBus.asObservable();
+  }
+
+  get isFilled() {
+    if (this._grid.every((element) => element.value)) {
+      this._eventBus.next({ event: "gridFilled" });
+    }
   }
 
   addPlay(index, player) {
@@ -17,15 +39,9 @@ export default class PlayGrid {
     newGrid[index] = { value: playerIcon };
     this._grid = newGrid;
 
-    eventBus.next({ event: "gridPlay", playGrid: this, playerIcon });
+    this._eventBus.next({ event: "gridPlay", playerIcon });
 
     return this;
-  }
-
-  get isFilled() {
-    if (this._grid.every((element) => element.value)) {
-      eventBus.next({ event: "gridFilled" });
-    }
   }
 
   isWinner(playerIcon) {
@@ -44,9 +60,9 @@ export default class PlayGrid {
         })
         .some((element) => element)
     ) {
-      eventBus.next({ event: "gridWinner" });
+      this._eventBus.next({ event: "gridWinner" });
     } else {
-      eventBus.next({ event: "gridNoWinner", playGrid: this });
+      this._eventBus.next({ event: "gridNoWinner" });
     }
   }
 }

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { filter } from "rxjs";
 import Element from "./Element";
 import PlayGrid from "./domains/PlayGrid";
-import eventBus, { isGameOverEvent } from "./domains/PlayGridEvent";
+import { isGameOverEvent } from "./domains/PlayGridEvent";
 import "./styles/Grid.css";
 
 export default function Grid() {
@@ -11,7 +11,7 @@ export default function Grid() {
   const [gameOver, setGameOver] = useState({ value: false, message: null });
 
   useEffect(() => {
-    const subscription = eventBus
+    const subscription = playGrid.changes$
       .pipe(filter((e) => isGameOverEvent(e)))
       .subscribe((ev) => {
         setGameOver({ value: true, message: ev.event });
