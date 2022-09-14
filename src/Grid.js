@@ -12,7 +12,7 @@ export default function Grid() {
 
   useEffect(() => {
     const subscription = playGrid.changes$
-      .pipe(filter((e) => isGameOverEvent(e)))
+      .pipe(filter(isGameOverEvent))
       .subscribe((ev) => {
         setGameOver({ value: true, message: ev.event });
       });

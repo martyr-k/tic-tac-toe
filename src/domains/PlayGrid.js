@@ -7,15 +7,13 @@ export default class PlayGrid {
     this._grid = new Array(9).fill({ value: null });
     this._eventBus = new Subject();
 
-    this._eventBus.pipe(filter((e) => isGridPlayEvent(e))).subscribe((e) => {
+    this._eventBus.pipe(filter(isGridPlayEvent)).subscribe((e) => {
       const { playerIcon } = e;
 
       this.isWinner(playerIcon);
     });
 
-    this._eventBus
-      .pipe(filter((e) => isNoWinnerEvent(e)))
-      .subscribe(() => this.isFilled);
+    this._eventBus.pipe(filter(isNoWinnerEvent)).subscribe(() => this.isFilled);
   }
 
   get grid() {
