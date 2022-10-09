@@ -10,10 +10,12 @@ export default class PlayGrid {
     this._eventBus.pipe(filter(isGridPlayEvent)).subscribe((e) => {
       const { playerIcon } = e;
 
-      this.isWinner(playerIcon);
+      this._isWinner(playerIcon);
     });
 
-    this._eventBus.pipe(filter(isNoWinnerEvent)).subscribe(() => this.isFilled);
+    this._eventBus
+      .pipe(filter(isNoWinnerEvent))
+      .subscribe(() => this._isFilled);
   }
 
   get grid() {
@@ -24,7 +26,7 @@ export default class PlayGrid {
     return this._eventBus.asObservable();
   }
 
-  get isFilled() {
+  get _isFilled() {
     if (this._grid.every((element) => element.value)) {
       this._eventBus.next({ event: "gridFilled" });
     }
@@ -42,7 +44,7 @@ export default class PlayGrid {
     return this;
   }
 
-  isWinner(playerIcon) {
+  _isWinner(playerIcon) {
     // - optimize to return on first combination true
     if (
       winningCombinations

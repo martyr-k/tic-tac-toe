@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import { filter } from "rxjs";
 import Element from "./Element";
 import PlayGrid from "./domains/PlayGrid";
 import { isGameOverEvent } from "./domains/PlayGridEvent";
 import "./styles/Grid.css";
+
+const socket = io("http://localhost:3001");
 
 export default function Grid() {
   const [playGrid, setPlayGrid] = useState(new PlayGrid());
@@ -13,12 +16,23 @@ export default function Grid() {
   useEffect(() => {
     const subscription = playGrid.changes$
       .pipe(filter(isGameOverEvent))
-      .subscribe((ev) => {
-        setGameOver({ value: true, message: ev.event });
+      .subscribe((e) => {
+        setGameOver({ value: true, message: e.event });
       });
 
     return () => subscription.unsubscribe();
   });
+
+  useEffect(() => {
+    socket.on("connection", () => {
+      console.log("1");
+      setIsConnected(true);
+    });
+
+    return () => {
+      socket.off("connection");
+    };
+  }, []);
 
   const handleNewGame = () => {
     setPlayGrid(new PlayGrid());

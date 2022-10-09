@@ -1,0 +1,17 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "A server to enable multiplayer for tic-tac-toe",
+  "scripts": {
+    "start:dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kelub Martyr",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.1",
+    "install": "^0.13.0",
+    "npm": "^8.19.2",
+    "socket.io": "^4.5.2"
+  }
+}
