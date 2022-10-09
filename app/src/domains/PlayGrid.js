@@ -15,7 +15,7 @@ export default class PlayGrid {
 
     this._eventBus
       .pipe(filter(isNoWinnerEvent))
-      .subscribe(() => this._isFilled);
+      .subscribe(() => this._isFilled());
   }
 
   get grid() {
@@ -26,7 +26,7 @@ export default class PlayGrid {
     return this._eventBus.asObservable();
   }
 
-  get _isFilled() {
+  _isFilled() {
     if (this._grid.every((element) => element.value)) {
       this._eventBus.next({ event: "gridFilled" });
     }
